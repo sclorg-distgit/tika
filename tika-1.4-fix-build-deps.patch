@@ -1,0 +1,53 @@
+diff -Nru tika-1.4/pom.xml tika-1.4-gil/pom.xml
+--- tika-1.4/pom.xml	2013-06-16 10:31:48.000000000 +0200
++++ tika-1.4-gil/pom.xml	2013-10-10 14:00:01.050417440 +0200
+@@ -194,7 +194,7 @@
+             <dependencies>
+               <dependency>
+                  <groupId>org.apache.ant</groupId>
+-                 <artifactId>ant-nodeps</artifactId>
++                 <artifactId>ant</artifactId>
+                  <version>1.8.1</version>
+                </dependency>
+             </dependencies>
+diff -Nru tika-1.4/tika-parsers/pom.xml tika-1.4-gil/tika-parsers/pom.xml
+--- tika-1.4/tika-parsers/pom.xml	2013-06-16 10:33:20.000000000 +0200
++++ tika-1.4-gil/tika-parsers/pom.xml	2013-10-10 14:01:58.532318716 +0200
+@@ -107,13 +107,13 @@
+          problems with encrypted PDFs. -->
+     <dependency>
+       <groupId>org.bouncycastle</groupId>
+-      <artifactId>bcmail-jdk15</artifactId>
+-      <version>1.45</version>
++      <artifactId>bcmail-jdk16</artifactId>
++      <version>1.46</version>
+     </dependency>
+     <dependency>
+       <groupId>org.bouncycastle</groupId>
+-      <artifactId>bcprov-jdk15</artifactId>
+-      <version>1.45</version>
++      <artifactId>bcprov-jdk16</artifactId>
++      <version>1.46</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.poi</groupId>
+@@ -141,8 +141,8 @@
+       </exclusions>
+     </dependency>
+     <dependency>
+-      <groupId>org.apache.geronimo.specs</groupId>
+-      <artifactId>geronimo-stax-api_1.0_spec</artifactId>
++      <groupId>javax.xml.stream</groupId>
++      <artifactId>stax-api</artifactId>
+       <version>1.0.1</version>
+     </dependency>
+     <dependency>
+@@ -152,7 +152,7 @@
+     </dependency>
+     <dependency>
+       <groupId>org.ow2.asm</groupId>
+-      <artifactId>asm-debug-all</artifactId>
++      <artifactId>asm-all</artifactId>
+       <version>4.1</version>
+     </dependency>
+     <dependency>
