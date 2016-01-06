@@ -1,0 +1,43 @@
+From 27cdcfe0e2b39fdc3ac0620cfb94e1910ca467bb Mon Sep 17 00:00:00 2001
+From: Michal Srb <msrb@redhat.com>
+Date: Fri, 7 Mar 2014 08:39:06 +0100
+Subject: [PATCH] bouncycastle 1.50
+
+---
+ .../src/main/java/org/apache/tika/parser/crypto/Pkcs7Parser.java    | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/tika-parsers/src/main/java/org/apache/tika/parser/crypto/Pkcs7Parser.java b/tika-parsers/src/main/java/org/apache/tika/parser/crypto/Pkcs7Parser.java
+index d66b95e..094659b 100644
+--- a/tika-parsers/src/main/java/org/apache/tika/parser/crypto/Pkcs7Parser.java
++++ b/tika-parsers/src/main/java/org/apache/tika/parser/crypto/Pkcs7Parser.java
+@@ -31,6 +31,8 @@ import org.apache.tika.parser.Parser;
+ import org.bouncycastle.cms.CMSException;
+ import org.bouncycastle.cms.CMSSignedDataParser;
+ import org.bouncycastle.cms.CMSTypedStream;
++import org.bouncycastle.operator.OperatorCreationException;
++import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+ import org.xml.sax.ContentHandler;
+ import org.xml.sax.SAXException;
+ 
+@@ -58,7 +60,7 @@ public class Pkcs7Parser extends AbstractParser {
+             throws IOException, SAXException, TikaException {
+         try {
+             CMSSignedDataParser parser =
+-                    new CMSSignedDataParser(new CloseShieldInputStream(stream));
++                  new CMSSignedDataParser(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build(), new CloseShieldInputStream(stream));
+             try {
+                 CMSTypedStream content = parser.getSignedContent();     
+                 if (content == null) {
+@@ -77,6 +79,8 @@ public class Pkcs7Parser extends AbstractParser {
+             }
+         } catch (CMSException e) {
+             throw new TikaException("Unable to parse pkcs7 signed data", e);
++        } catch (OperatorCreationException e) {
++            throw new TikaException("Unable to parse pkcs7 signed data", e);
+         }
+     }
+ 
+-- 
+1.8.5.3
+
