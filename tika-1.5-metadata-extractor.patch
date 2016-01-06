@@ -1,0 +1,77 @@
+diff -Nru tika-1.5/tika-parsers/pom.xml tika-1.5.metadata-extractor/tika-parsers/pom.xml
+--- tika-1.5/tika-parsers/pom.xml	2015-04-22 18:32:55.673585133 +0200
++++ tika-1.5.metadata-extractor/tika-parsers/pom.xml	2015-04-22 18:31:18.890503541 +0200
+@@ -163,7 +163,7 @@
+     <dependency>
+        <groupId>com.drewnoakes</groupId>
+        <artifactId>metadata-extractor</artifactId>
+-       <version>2.6.2</version>
++       <version>2.8.1</version>
+     </dependency>
+     <dependency>
+       <groupId>de.l3s.boilerpipe</groupId>
+diff -Nru tika-1.5/tika-parsers/src/main/java/org/apache/tika/parser/image/ImageMetadataExtractor.java tika-1.5.metadata-extractor/tika-parsers/src/main/java/org/apache/tika/parser/image/ImageMetadataExtractor.java
+--- tika-1.5/tika-parsers/src/main/java/org/apache/tika/parser/image/ImageMetadataExtractor.java	2014-02-09 21:36:28.000000000 +0100
++++ tika-1.5.metadata-extractor/tika-parsers/src/main/java/org/apache/tika/parser/image/ImageMetadataExtractor.java	2015-04-22 18:28:12.139993992 +0200
+@@ -37,6 +37,7 @@
+ import com.drew.imaging.jpeg.JpegMetadataReader;
+ import com.drew.imaging.jpeg.JpegProcessingException;
+ import com.drew.imaging.tiff.TiffMetadataReader;
++import com.drew.imaging.tiff.TiffProcessingException;
+ import com.drew.lang.GeoLocation;
+ import com.drew.lang.Rational;
+ import com.drew.metadata.Directory;
+@@ -104,6 +105,8 @@
+             handle(tiffMetadata);
+         } catch (MetadataException e) {
+             throw new TikaException("Can't read TIFF metadata", e);
++        } catch (TiffProcessingException e) {
++            throw new TikaException("Can't processing TIFF metadata", e);
+         }
+     }
+ 
+@@ -217,12 +220,12 @@
+             //Exif.Image.ImageWidth                        Short       1  100
+             //Exif.Image.ImageLength                       Short       1  75
+             // and the values are found in "Thumbnail Image Width" (and Height) from Metadata Extractor
+-            set(directory, metadata, ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_WIDTH, Metadata.IMAGE_WIDTH);
+-            set(directory, metadata, JpegDirectory.TAG_JPEG_IMAGE_WIDTH, Metadata.IMAGE_WIDTH);
+-            set(directory, metadata, ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT, Metadata.IMAGE_LENGTH);
+-            set(directory, metadata, JpegDirectory.TAG_JPEG_IMAGE_HEIGHT, Metadata.IMAGE_LENGTH);
++            set(directory, metadata, ExifThumbnailDirectory.TAG_IMAGE_WIDTH, Metadata.IMAGE_WIDTH);
++            set(directory, metadata, JpegDirectory.TAG_IMAGE_WIDTH, Metadata.IMAGE_WIDTH);
++            set(directory, metadata, ExifThumbnailDirectory.TAG_IMAGE_HEIGHT, Metadata.IMAGE_LENGTH);
++            set(directory, metadata, JpegDirectory.TAG_IMAGE_HEIGHT, Metadata.IMAGE_LENGTH);
+             // Bits per sample, two methods of extracting, exif overrides jpeg
+-            set(directory, metadata, JpegDirectory.TAG_JPEG_DATA_PRECISION, Metadata.BITS_PER_SAMPLE);
++            set(directory, metadata, JpegDirectory.TAG_DATA_PRECISION, Metadata.BITS_PER_SAMPLE);
+             set(directory, metadata, ExifSubIFDDirectory.TAG_BITS_PER_SAMPLE, Metadata.BITS_PER_SAMPLE);
+             // Straightforward
+             set(directory, metadata, ExifSubIFDDirectory.TAG_SAMPLES_PER_PIXEL, Metadata.SAMPLES_PER_PIXEL);
+@@ -242,8 +245,8 @@
+             return directoryType == JpegCommentDirectory.class;
+         }
+         public void handle(Directory directory, Metadata metadata) throws MetadataException {
+-            if (directory.containsTag(JpegCommentDirectory.TAG_JPEG_COMMENT)) {
+-                metadata.add(TikaCoreProperties.COMMENTS, directory.getString(JpegCommentDirectory.TAG_JPEG_COMMENT));
++            if (directory.containsTag(JpegCommentDirectory.TAG_COMMENT)) {
++                metadata.add(TikaCoreProperties.COMMENTS, directory.getString(JpegCommentDirectory.TAG_COMMENT));
+             }
+         }
+     }
+@@ -362,11 +365,11 @@
+             if(directory.containsTag(ExifIFD0Directory.TAG_RESOLUTION_UNIT)) {
+                metadata.set(Metadata.RESOLUTION_UNIT, directory.getDescription(ExifIFD0Directory.TAG_RESOLUTION_UNIT));
+             }
+-            if(directory.containsTag(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_WIDTH)) {
+-                metadata.set(Metadata.IMAGE_WIDTH, directory.getDescription(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_WIDTH));
++            if(directory.containsTag(ExifThumbnailDirectory.TAG_IMAGE_WIDTH)) {
++                metadata.set(Metadata.IMAGE_WIDTH, directory.getDescription(ExifThumbnailDirectory.TAG_IMAGE_WIDTH));
+             }
+-            if(directory.containsTag(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT)) {
+-                metadata.set(Metadata.IMAGE_LENGTH, directory.getDescription(ExifThumbnailDirectory.TAG_THUMBNAIL_IMAGE_HEIGHT));
++            if(directory.containsTag(ExifThumbnailDirectory.TAG_IMAGE_HEIGHT)) {
++                metadata.set(Metadata.IMAGE_LENGTH, directory.getDescription(ExifThumbnailDirectory.TAG_IMAGE_HEIGHT));
+             }
+         }
+         /**
